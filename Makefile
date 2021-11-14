@@ -13,7 +13,7 @@ deploy:
 	gcloud config set app/cloud_build_timeout 1200
 	gcloud app deploy
 
-run:
+run-local:
 	cd api && \
 	DATABASE_URL=mysql://user:password@127.0.0.1:3306/db \
 	ADDRESS=127.0.0.1 cargo run
@@ -22,8 +22,8 @@ run-linux:
 	docker build -t rust-gae-cloudsql-sample-local .
 	docker run --rm -p 8080:8080 rust-gae-cloudsql-sample-local
 
-run-db:
+run-local-db:
 	docker-compose up
 
-proxy_db:
+proxy_cloud_sql:
 	cloud_sql_proxy -credential_file=gcp.cred.json -instances=rust-gae-cloudsql-sample:asia-northeast1:db=tcp:0.0.0.0:3306

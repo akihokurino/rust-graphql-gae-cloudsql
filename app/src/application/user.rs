@@ -1,4 +1,4 @@
-use crate::ddb::Dao;
+use crate::ddb::{Dao, Tx};
 use crate::domain::user::User;
 use crate::AppResult;
 use chrono::{DateTime, Utc};
@@ -33,6 +33,20 @@ impl Application {
         let now: DateTime<Utc> = Utc::now();
         let user = User::new(name, now);
         self.user_dao.insert(&conn, &user)?;
+        Ok(user)
+    }
+
+    pub fn update(&self, id: String, name: String) -> AppResult<User> {
+        let conn = self.db_conn.lock().unwrap();
+        let now: DateTime<Utc> = Utc::now();
+
+        let user = Tx::run(&conn, || {
+            let mut user = self.user_dao.get(&conn, id)?;
+            user.update(name, now);
+            self.user_dao.update(&conn, &user)?;
+            Ok(user)
+        })?;
+
         Ok(user)
     }
 

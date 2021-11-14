@@ -5,7 +5,6 @@ use crate::AppResult;
 use diesel::connection::TransactionManager;
 use diesel::mysql::MysqlConnection;
 use diesel::prelude::*;
-use std::env;
 use std::future::Future;
 use std::marker::PhantomData;
 
@@ -32,7 +31,7 @@ impl Tx {
         conn.transaction(|| f())
     }
 
-    pub async fn run_async<R, F>(conn: &MysqlConnection, f: F) -> AppResult<R>
+    pub async fn _run_async<R, F>(conn: &MysqlConnection, f: F) -> AppResult<R>
     where
         F: Future<Output = AppResult<R>>,
     {
