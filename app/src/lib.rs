@@ -42,6 +42,7 @@ impl From<diesel::result::Error> for AppError {
 
 pub fn establish_connection() -> MysqlConnection {
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    println!("database url = {}", database_url);
     MysqlConnection::establish(&database_url)
         .expect(&format!("Error connecting to {}", database_url))
 }

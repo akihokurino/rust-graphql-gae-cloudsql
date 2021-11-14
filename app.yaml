@@ -1,2 +1,8 @@
 runtime: custom
 env: flex
+
+beta_settings:
+  cloud_sql_instances: rust-gae-cloudsql-sample:asia-northeast1:db=tcp:3306
+
+env_variables:
+  DATABASE_URL: mysql://root:password@172.17.0.1:3306/db
