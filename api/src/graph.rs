@@ -13,17 +13,21 @@ use std::sync::{Arc, Mutex};
 use strum_macros::Display as StrumDisplay;
 
 pub struct Context {
+    pub authenticated_user_id: Option<String>,
     pub user_application: user::Application,
 }
 
 impl juniper::Context for Context {}
 
 impl Context {
-    pub fn new() -> Self {
+    pub fn new(authenticated_user_id: Option<String>) -> Self {
         let conn_ref = Arc::new(Mutex::new(app::establish_connection()));
         let user_application = user::Application::new(conn_ref);
 
-        Self { user_application }
+        Self {
+            authenticated_user_id,
+            user_application,
+        }
     }
 }
 

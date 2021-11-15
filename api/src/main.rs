@@ -46,6 +46,38 @@ async fn graphql_route(
     payload: web::Payload,
     schema: web::Data<Schema>,
 ) -> actix_web::Result<HttpResponse> {
-    let context = Context::new();
+    let authenticated_user_id: Option<String> = match req.headers().get("x-user-id") {
+        Some(v) => v.to_str().map(|id| Some(id.to_string())).unwrap_or(None),
+        None => authenticate(&req).await.into(),
+    };
+
+    if let Some(id) = authenticated_user_id.clone() {
+        println!("login user id: {}", id);
+    }
+
+    let context = Context::new(authenticated_user_id);
     graphql_handler(&schema, &context, req, payload).await
+}
+
+async fn authenticate(req: &HttpRequest) -> Option<String> {
+    let token_header: Option<String> = match req.headers().get("authorization") {
+        Some(v) => v.to_str().map(|id| Some(id.to_string())).unwrap_or(None),
+        None => None,
+    };
+
+    if let None = token_header {
+        return None;
+    }
+
+    let token = token_header.unwrap_or("".to_string());
+    if token.len() < 7 {
+        return None;
+    }
+
+    let result = app::firebase::auth::verify_id_token(&token[7..]).await;
+
+    match result {
+        Ok(id) => Some(id),
+        Err(_) => None,
+    }
 }

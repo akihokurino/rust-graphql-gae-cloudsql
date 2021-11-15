@@ -5,3 +5,4 @@
 - diesel（ https://github.com/diesel-rs/diesel ）
 - app engine flexible
 - cloud sql
+- firebase auth

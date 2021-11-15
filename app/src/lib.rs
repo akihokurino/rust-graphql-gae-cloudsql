@@ -1,6 +1,7 @@
 pub mod application;
 mod ddb;
 pub mod domain;
+pub mod firebase;
 
 #[macro_use]
 extern crate diesel;
@@ -37,6 +38,18 @@ impl From<diesel::result::Error> for AppError {
             diesel::result::Error::NotFound => Self::NotFound,
             _ => Self::Internal(e.to_string()),
         }
+    }
+}
+
+impl From<reqwest::Error> for AppError {
+    fn from(e: reqwest::Error) -> Self {
+        Self::Internal(e.to_string())
+    }
+}
+
+impl From<jsonwebtoken::errors::Error> for AppError {
+    fn from(e: jsonwebtoken::errors::Error) -> Self {
+        Self::Internal(e.to_string())
     }
 }
 
